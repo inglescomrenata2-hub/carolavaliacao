@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress Assessment — Caroline</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0b09;--ink2:#35302a;--ink3:#7a7468;
+  --bg:#f8f5f0;--s2:#ede9e0;--s3:#ddd8cc;
+  --acc:#c8501a;--al:#f7ede7;
+  --b1:#1a4a90;--b1l:#e8eef8;
+  --b2:#1a6248;--b2l:#e2f2eb;
+  --gold:#8a6010;--gol:#faf0d0;
+  --pur:#5a1a8c;--pl:#f2eafc;
+  --ok:#1a6248;--okl:#e2f2eb;
+  --err:#9a1a1a;--errl:#fceaea;
+  --serif:"DM Serif Display",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);margin:0;line-height:1.7}
+/* HERO */
+.hero{background:var(--ink);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-60px;top:-60px;width:300px;height:300px;border-radius:50%;background:rgba(200,80,26,.1);pointer-events:none}
+.hero-inner{max-width:820px;margin:0 auto;position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem}
+.hero-left .ey{font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(200,80,26,.7);margin-bottom:.5rem}
+.hero-left .h1{font-family:var(--serif);font-size:clamp(1.8rem,4.5vw,3rem);color:white;line-height:1.05;margin-bottom:.5rem}
+.hero-left .h1 em{font-style:italic;color:#f0a070}
+.hero-left .sub{font-size:12px;color:rgba(255,255,255,.42);max-width:400px;line-height:1.6}
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.timer-badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 16px;text-align:center}
+.tb-label{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:2px}
+.tb-time{font-family:var(--serif);font-size:1.8rem;color:white;line-height:1}
+.tb-sub{font-size:10px;color:rgba(255,255,255,.35)}
+/* NAV */
+.nav{background:var(--ink);border-top:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100}
+.nw{max-width:820px;margin:0 auto;display:flex;overflow-x:auto;padding:0 2rem}
+.tab{font-family:var(--sans);font-size:11px;font-weight:500;padding:.8rem 13px;border:none;background:transparent;color:rgba(255,255,255,.35);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s}
+.tab:hover{color:rgba(255,255,255,.7)}
+.tab.on{color:white;border-bottom-color:var(--acc)}
+.tab.done{color:rgba(26,98,72,.8);border-bottom-color:transparent}
+.tab.done::after{content:" ✓"}
+/* SAVE BAR */
+.save-bar{background:white;border-bottom:1px solid var(--s3);padding:.75rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:41px;z-index:90}
+.sb-inner{max-width:820px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.sb-score{font-size:13px;color:var(--ink2)}
+.sb-score strong{font-weight:600;color:var(--ink)}
+.sb-btns{display:flex;gap:8px}
+.sbtn{font-family:var(--sans);font-size:12px;font-weight:600;padding:6px 16px;border-radius:7px;cursor:pointer;transition:all .15s;border:none}
+.sbtn-dl{background:var(--b2);color:white}
+.sbtn-dl:hover{background:#145038}
+.sbtn-cp{background:var(--s2);color:var(--ink2);border:1px solid var(--s3)}
+.sbtn-cp:hover{background:var(--s3)}
+/* PAGE */
+.page{display:none;max-width:820px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.page.on{display:block}
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--s3)}
+.sh-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.sh-meta{flex:1}
+.sh-title{font-family:var(--serif);font-size:1.2rem;color:var(--ink);font-weight:700;margin-bottom:1px}
+.sh-info{font-size:12px;color:var(--ink3)}
+.sh-timer{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:var(--gol);color:var(--gold)}
+/* SL */
+.sl{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:1rem;display:flex;align-items:center;gap:10px}
+.sl::after{content:"";flex:1;height:.5px;background:var(--s3)}
+/* QCARD */
+.qcard{background:white;border:1px solid var(--s3);border-radius:12px;margin-bottom:1rem;overflow:hidden;transition:border-color .2s}
+.qcard.ok{border-color:var(--ok)}
+.qcard.err{border-color:var(--err)}
+.qcard.answered{border-color:var(--s3)}
+.qn{background:var(--s2);padding:6px 14px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--s3);display:flex;justify-content:space-between;align-items:center}
+.qmark{font-size:10px;font-weight:700;padding:1px 8px;border-radius:100px}
+.qm-ok{background:var(--okl);color:var(--ok)}
+.qm-err{background:var(--errl);color:var(--err)}
+.qb{padding:1.1rem 1.4rem}
+.qctx{font-size:12px;color:var(--ink3);font-style:italic;margin-bottom:.6rem;padding:6px 10px;background:var(--bg);border-radius:6px;border-left:2px solid var(--s3)}
+.qs{font-size:14px;color:var(--ink);line-height:1.85;margin-bottom:.9rem}
+.blank{display:inline-block;min-width:110px;border-bottom:2.5px dashed var(--s3);text-align:center;padding:0 4px;color:var(--ink3);font-style:italic;vertical-align:middle;font-size:13px;transition:all .2s}
+.blank.ok{border-bottom-color:var(--ok);border-bottom-style:solid;color:var(--ok);font-weight:600;font-style:normal}
+.blank.err{border-bottom-color:var(--err);border-bottom-style:solid;color:var(--err);font-weight:600;font-style:normal}
+.choices{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:.7rem}
+.choices.col{flex-direction:column}
+.btn{font-family:var(--sans);font-size:13px;font-weight:500;padding:6px 15px;border-radius:100px;border:1.5px solid var(--s3);background:var(--bg);color:var(--ink2);cursor:pointer;transition:all .15s;text-align:left;user-select:none}
+.btn:hover:not([disabled]){background:var(--b1l);border-color:var(--b1);color:var(--b1)}
+.btn.ok{background:var(--okl);border-color:var(--ok);color:var(--ok);font-weight:600}
+.btn.err{background:var(--errl);border-color:var(--err);color:var(--err)}
+.btn.reveal{background:var(--okl);border-color:var(--ok);color:var(--ok);font-weight:600}
+.btn[disabled]{cursor:default}
+.btn-lg{border-radius:10px;padding:10px 14px;line-height:1.6;font-size:13px;font-weight:400;white-space:normal}
+.fb{display:none;font-size:12px;line-height:1.6;padding:9px 13px;border-radius:0 9px 9px 0;margin-top:.25rem}
+.fb.show{display:block}
+.fb-ok{background:var(--okl);border-left:3px solid var(--ok);color:#073d22}
+.fb-err{background:var(--errl);border-left:3px solid var(--err);color:#5e0808}
+.fb strong{font-weight:600}
+/* TEXT INPUT */
+.tinput{width:100%;font-family:var(--sans);font-size:13px;padding:9px 12px;border:1.5px solid var(--s3);border-radius:8px;background:var(--bg);color:var(--ink);outline:none;transition:border-color .15s;resize:vertical;min-height:44px}
+.tinput:focus{border-color:var(--b1);background:white}
+.tinput.answered{background:white;border-color:var(--s3)}
+/* PROGRESS */
+.prow{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+.pwrap{flex:1;background:var(--s3);border-radius:100px;height:4px;overflow:hidden}
+.pfill{height:100%;background:var(--acc);border-radius:100px;width:0%;transition:width .5s}
+.ptxt{font-size:11px;color:var(--ink3);white-space:nowrap}
+/* READING PASSAGE */
+.passage{background:white;border:1px solid var(--s3);border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;font-size:14px;line-height:1.85;color:var(--ink2)}
+.passage h3{font-family:var(--serif);font-size:1.1rem;color:var(--ink);margin-bottom:.75rem;font-weight:700}
+.passage p{margin-bottom:.85rem}
+.passage p:last-child{margin-bottom:0}
+.hl{background:rgba(200,80,26,.1);padding:0 3px;border-radius:3px;font-weight:600;color:var(--acc)}
+/* SPEAKING */
+.sp-card{background:white;border:1px solid var(--s3);border-radius:12px;margin-bottom:1rem;overflow:hidden}
+.sp-head{background:var(--s2);padding:.8rem 1.3rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--s3)}
+.sp-title{font-family:var(--serif);font-size:.95rem;color:var(--ink);font-weight:700}
+.sp-meta{font-size:11px;color:var(--ink3)}
+.sp-body{padding:1.1rem 1.4rem}
+.sp-prompt{font-size:14px;color:var(--ink);line-height:1.7;margin-bottom:1rem;padding:10px 14px;background:var(--bg);border-radius:8px;border-left:3px solid var(--acc)}
+.sp-vocab{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.sv{font-size:11px;font-weight:600;padding:2px 9px;border-radius:100px;background:var(--al);color:var(--acc)}
+.sp-rubric{font-size:12px;color:var(--ink3);font-style:italic;border-top:1px solid var(--s2);padding-top:.75rem}
+/* TIMER RING */
+.tring-wrap{display:flex;align-items:center;gap:14px;margin-bottom:.75rem}
+.tsvg{width:72px;height:72px;flex-shrink:0}
+.ring-bg{fill:none;stroke:var(--s3);stroke-width:9}
+.ring-fill{fill:none;stroke-width:9;stroke-linecap:round;transform-origin:36px 36px;transform:rotate(-90deg);transition:stroke-dashoffset 1s linear,stroke .3s}
+.tnum{font-family:var(--serif);font-size:1.4rem;line-height:1;text-anchor:middle;dominant-baseline:middle}
+.tring-info{flex:1}
+.tring-status{font-size:13px;color:var(--ink);margin-bottom:5px}
+.tbtns{display:flex;gap:7px}
+.tbtn{font-family:var(--sans);font-size:12px;font-weight:500;padding:7px 18px;border-radius:7px;cursor:pointer;border:1.5px solid var(--s3);background:var(--s2);color:var(--ink2);transition:all .15s}
+.tbtn:hover:not([disabled]){background:white;color:var(--ink)}
+.tbtn.primary{background:var(--acc);color:white;border-color:var(--acc)}
+.tbtn[disabled]{opacity:.4;cursor:default}
+.tdone-msg{display:none;font-size:12px;color:var(--b2);background:var(--b2l);padding:8px 12px;border-radius:7px;margin-top:.6rem}
+.tdone-msg.show{display:block}
+/* SELF ASSESS */
+.sa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:.75rem}
+.sa-item{background:var(--bg);border:1.5px solid var(--s3);border-radius:8px;padding:.7rem;cursor:pointer;transition:all .15s;user-select:none}
+.sa-item:hover{border-color:var(--b1);background:var(--b1l)}
+.sa-item.sel{background:var(--b1);border-color:var(--b1);color:white}
+.sa-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:3px}
+.sa-item.sel .sa-lbl{color:rgba(255,255,255,.5)}
+.sa-val{font-size:13px;color:var(--ink);font-weight:500}
+.sa-item.sel .sa-val{color:white}
+/* SCORE FINAL */
+.final-score{background:white;border:1px solid var(--s3);border-radius:14px;padding:2rem;text-align:center;margin-top:2rem;display:none}
+.final-score.show{display:block}
+.fs-title{font-family:var(--serif);font-size:1.5rem;margin-bottom:.4rem}
+.fs-big{font-family:var(--serif);font-size:3.5rem;line-height:1;color:var(--acc);margin-bottom:.35rem}
+.fs-msg{font-size:13px;color:var(--ink2);margin-bottom:1.25rem}
+.fs-breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:1.25rem}
+.fs-section{background:var(--bg);border:1px solid var(--s3);border-radius:8px;padding:.7rem .85rem;text-align:left}
+.fs-s-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:2px}
+.fs-s-score{font-family:var(--serif);font-size:1.3rem;font-weight:700;color:var(--ink)}
+.sbar{background:var(--s2);border-radius:100px;height:6px;margin:.5rem auto;max-width:220px;overflow:hidden}
+.sbar-f{height:100%;background:var(--acc);border-radius:100px;width:0%;transition:width 1s ease}
+.fs-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.fs-btn{font-family:var(--sans);font-size:13px;font-weight:600;padding:9px 22px;border-radius:8px;cursor:pointer;border:none;transition:all .15s}
+.fs-btn-dl{background:var(--b2);color:white}
+.fs-btn-dl:hover{background:#145038}
+.fs-btn-cp{background:var(--s2);color:var(--ink2);border:1.5px solid var(--s3)}
+.fs-btn-cp:hover{background:var(--s3)}
+.fs-btn-re{background:transparent;color:var(--ink3);border:1.5px solid var(--s3)}
+/* TIP */
+.tip{padding:10px 14px;font-size:12px;line-height:1.6;border-radius:0 9px 9px 0;margin-bottom:1rem}
+.tip strong{font-weight:600;display:block;margin-bottom:2px}
+.tip-b{background:var(--b1l);border-left:3px solid var(--b1);color:#0a2860}
+.tip-a{background:var(--al);border-left:3px solid var(--acc);color:#5c1500}
+/* FOOTER */
+.footer{border-top:1px solid var(--s3);padding:1.25rem;font-size:11px;color:var(--ink3);max-width:820px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+@media(max-width:560px){
+  .hero-inner{flex-direction:column;align-items:flex-start}
+  .choices{flex-direction:column}
+  .btn{border-radius:8px}
+  .nw{padding:0 .75rem}
+  .save-bar{top:38px}
+  .fs-breakdown{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <p class="ey">Progress Assessment &middot; Caroline Kishibe &middot; B2→C1</p>
+      <h1 class="h1">English<br><em>Assessment</em></h1>
+      <p class="sub">Vocabulary &middot; Grammar &middot; Reading &middot; Practice &middot; Speaking &mdash; max 40 minutes. Your answers are saved automatically as you go.</p>
+    </div>
+    <div class="hero-right">
+      <div class="timer-badge">
+        <p class="tb-label">Time elapsed</p>
+        <p class="tb-time" id="global-timer">00:00</p>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:5px">
+          <button onclick="startGlobalTimer()" id="gt-start" style="font-family:var(--sans);font-size:10px;font-weight:600;padding:3px 10px;border-radius:6px;border:none;background:#1a6248;color:white;cursor:pointer">▶ Start</button>
+          <button onclick="stopGlobalTimer()" id="gt-stop" style="font-family:var(--sans);font-size:10px;font-weight:600;padding:3px 10px;border-radius:6px;border:none;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);cursor:pointer">⏸ Pause</button>
+        </div>
+        <p class="tb-sub">max 40:00</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nw">
+    <button class="tab on" onclick="go('t1',this)" id="nav1">1 · Vocabulary</button>
+    <button class="tab" onclick="go('t2',this)" id="nav2">2 · Grammar</button>
+    <button class="tab" onclick="go('t3',this)" id="nav3">3 · Reading</button>
+    <button class="tab" onclick="go('t4',this)" id="nav4">4 · Practice</button>
+    <button class="tab" onclick="go('t5',this)" id="nav5">5 · Speaking</button>
+    <button class="tab" onclick="go('t6',this)" id="nav6">Results</button>
+  </div>
+</nav>
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <div class="sb-inner">
+    <span class="sb-score">Score so far: <strong id="sb-score-txt">0 / 0 answered</strong></span>
+    <div class="sb-btns">
+      <button class="sbtn sbtn-cp" onclick="copyResults()">📋 Copy results</button>
+      <button class="sbtn sbtn-dl" onclick="downloadResults()">⬇️ Download results</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================
+     TAB 1: VOCABULARY (10 q)
+======================== -->
+<div class="page on" id="t1">
+<div class="sh">
+  <div class="sh-icon" style="background:var(--al)">📚</div>
+  <div class="sh-meta">
+    <p class="sh-title">Section 1 — Vocabulary</p>
+    <p class="sh-info">10 questions &middot; lesson expressions + company vocabulary</p>
+  </div>
+  <span class="sh-timer">~7 min</span>
+</div>
+<div class="prow"><div class="pwrap"><div class="pfill" id="pf1"></div></div><span class="ptxt" id="pl1">0 / 10</span></div>
+
+<div class="sl">Meeting &amp; calendar expressions</div>
+
+<div class="qcard" id="vq1"><div class="qn">V1 <span class="qmark" id="vm1"></span></div><div class="qb">
+  <p class="qs">"I've decided to <span class="blank" id="vb1">_______</span> this week's sync — my plate is full with the Pilão launch."</p>
+  <div class="choices" id="vc1">
+    <button class="btn" data-q="vq1" data-blank="vb1" data-val="pass on" data-ans="pass on" data-sec="V" data-msg="&lt;strong&gt;Pass on&lt;/strong&gt; = opt out professionally. More deliberate than 'skip' — signals an active, considered decision not to attend.">pass on</button>
+    <button class="btn" data-q="vq1" data-blank="vb1" data-val="skip" data-ans="pass on" data-sec="V" data-msg="'Skip' is too casual for a professional context. &lt;strong&gt;Pass on&lt;/strong&gt; is the correct professional expression.">skip</button>
+    <button class="btn" data-q="vq1" data-blank="vb1" data-val="miss" data-ans="pass on" data-sec="V" data-msg="'Miss' implies accident. &lt;strong&gt;Pass on&lt;/strong&gt; signals a deliberate, professional choice not to attend.">miss</button>
+  </div><div class="fb" id="vf1"></div>
+</div></div>
+
+<div class="qcard" id="vq2"><div class="qn">V2 <span class="qmark" id="vm2"></span></div><div class="qb">
+  <p class="qs">"I won't be in the meeting — just <span class="blank" id="vb2">_______</span> on any key decisions."</p>
+  <div class="choices" id="vc2">
+    <button class="btn" data-q="vq2" data-blank="vb2" data-val="keep me in the loop" data-ans="keep me in the loop" data-sec="V" data-msg="&lt;strong&gt;Keep me in the loop&lt;/strong&gt; = keep me updated on what happens. Standard corporate phrase for staying informed without attending.">keep me in the loop</button>
+    <button class="btn" data-q="vq2" data-blank="vb2" data-val="tell me everything" data-ans="keep me in the loop" data-sec="V" data-msg="Too casual and vague. &lt;strong&gt;Keep me in the loop&lt;/strong&gt; is the precise professional phrase.">tell me everything</button>
+    <button class="btn" data-q="vq2" data-blank="vb2" data-val="send me the minutes" data-ans="keep me in the loop" data-sec="V" data-msg="More specific but narrower. &lt;strong&gt;Keep me in the loop&lt;/strong&gt; implies ongoing communication, not just one document.">send me the minutes</button>
+  </div><div class="fb" id="vf2"></div>
+</div></div>
+
+<div class="qcard" id="vq3"><div class="qn">V3 <span class="qmark" id="vm3"></span></div><div class="qb">
+  <p class="qs">"I've been <span class="blank" id="vb3">_______</span> too many projects lately — I need to protect some focus time."</p>
+  <div class="choices" id="vc3">
+    <button class="btn" data-q="vq3" data-blank="vb3" data-val="juggling" data-ans="juggling" data-sec="V" data-msg="&lt;strong&gt;Juggling&lt;/strong&gt; = trying to manage many things at once. It implies difficulty and overload — not just 'handling', which sounds too comfortable.">juggling</button>
+    <button class="btn" data-q="vq3" data-blank="vb3" data-val="handling" data-ans="juggling" data-sec="V" data-msg="'Handling' is neutral — doesn't convey overload. &lt;strong&gt;Juggling&lt;/strong&gt; specifically implies managing more than is comfortable.">handling</button>
+    <button class="btn" data-q="vq3" data-blank="vb3" data-val="doing" data-ans="juggling" data-sec="V" data-msg="'Doing' is too generic. &lt;strong&gt;Juggling&lt;/strong&gt; is the precise expression for managing too many things simultaneously.">doing</button>
+  </div><div class="fb" id="vf3"></div>
+</div></div>
+
+<div class="qcard" id="vq4"><div class="qn">V4 <span class="qmark" id="vm4"></span></div><div class="qb">
+  <p class="qs">What does "contribute asynchronously" mean in a corporate context?</p>
+  <div class="choices col" id="vc4">
+    <button class="btn btn-lg" data-q="vq4" data-blank="" data-val="A" data-ans="A" data-sec="V" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; Asynchronous = not in real time. Contributing asynchronously means adding your input via documents, recordings, or comments — without being physically or virtually present at the meeting.">A: Participating without being present in real time — via comments, recordings, or documents.</button>
+    <button class="btn btn-lg" data-q="vq4" data-blank="" data-val="B" data-ans="A" data-sec="V" data-msg="B describes synchronous (real-time) participation. &lt;strong&gt;Asynchronous&lt;/strong&gt; is the opposite — contributing on your own time, not during the live session.">B: Attending a meeting but not speaking during it.</button>
+    <button class="btn btn-lg" data-q="vq4" data-blank="" data-val="C" data-ans="A" data-sec="V" data-msg="C describes delegation, not async contribution. &lt;strong&gt;Asynchronous contribution&lt;/strong&gt; means YOU participate — just not in real time.">C: Sending a colleague to represent you in a meeting.</button>
+  </div><div class="fb" id="vf4"></div>
+</div></div>
+
+<div class="qcard" id="vq5"><div class="qn">V5 <span class="qmark" id="vm5"></span></div><div class="qb">
+  <p class="qs">"I'm working to <span class="blank" id="vb5">_______</span> this sprint — fewer meetings means more deep work."</p>
+  <div class="choices" id="vc5">
+    <button class="btn" data-q="vq5" data-blank="vb5" data-val="keep my calendar lean" data-ans="keep my calendar lean" data-sec="V" data-msg="&lt;strong&gt;Keep my calendar lean&lt;/strong&gt; = maintain a light, intentional schedule with space for focused work. 'Lean' signals strategic self-management.">keep my calendar lean</button>
+    <button class="btn" data-q="vq5" data-blank="vb5" data-val="have fewer meetings" data-ans="keep my calendar lean" data-sec="V" data-msg="Accurate but flat. &lt;strong&gt;Keep my calendar lean&lt;/strong&gt; is more precise and professional — it implies an intentional strategy.">have fewer meetings</button>
+    <button class="btn" data-q="vq5" data-blank="vb5" data-val="stay free" data-ans="keep my calendar lean" data-sec="V" data-msg="Too informal. The professional expression is &lt;strong&gt;keep my calendar lean&lt;/strong&gt;.">stay free</button>
+  </div><div class="fb" id="vf5"></div>
+</div></div>
+
+<div class="sl" style="margin-top:2rem">Corporate &amp; company vocabulary</div>
+
+<div class="qcard" id="vq6"><div class="qn">V6 <span class="qmark" id="vm6"></span></div><div class="qb">
+  <p class="qctx">Company types</p>
+  <p class="qs">A company whose shares are traded on the stock exchange — anyone can buy a part of it — is called a <span class="blank" id="vb6">_______</span>.</p>
+  <div class="choices" id="vc6">
+    <button class="btn" data-q="vq6" data-blank="vb6" data-val="public limited company (PLC)" data-ans="public limited company (PLC)" data-sec="V" data-msg="&lt;strong&gt;Public limited company (PLC)&lt;/strong&gt; — publicly traded on a stock exchange. Anyone with a brokerage account can own shares. Subject to strict reporting and regulation.">public limited company (PLC)</button>
+    <button class="btn" data-q="vq6" data-blank="vb6" data-val="limited company (Ltd)" data-ans="public limited company (PLC)" data-sec="V" data-msg="A limited company (Ltd) is privately owned — shares are NOT publicly traded. The key here is the stock exchange — that means &lt;strong&gt;PLC&lt;/strong&gt;.">limited company (Ltd)</button>
+    <button class="btn" data-q="vq6" data-blank="vb6" data-val="non-profit" data-ans="public limited company (PLC)" data-sec="V" data-msg="A non-profit doesn't distribute profits to shareholders. The description — stock exchange, anyone can buy shares — defines a &lt;strong&gt;PLC&lt;/strong&gt;.">non-profit</button>
+  </div><div class="fb" id="vf6"></div>
+</div></div>
+
+<div class="qcard" id="vq7"><div class="qn">V7 <span class="qmark" id="vm7"></span></div><div class="qb">
+  <p class="qs">Café Pilão and Caboclo are both Brazilian brands owned by JDE Peet's, a European company. This means Café Pilão operates as a <span class="blank" id="vb7">_______</span> of JDE Peet's.</p>
+  <div class="choices" id="vc7">
+    <button class="btn" data-q="vq7" data-blank="vb7" data-val="subsidiary" data-ans="subsidiary" data-sec="V" data-msg="&lt;strong&gt;Subsidiary&lt;/strong&gt; — a company controlled by a parent (HQ). It operates with some local autonomy but answers to the parent. JDE Peet's is the parent company; Pilão is the Brazilian subsidiary.">subsidiary</button>
+    <button class="btn" data-q="vq7" data-blank="vb7" data-val="franchise" data-ans="subsidiary" data-sec="V" data-msg="A franchise is a licenced model where an independent operator pays to use a brand. JDE Peet's fully owns the Pilão brand — that's a &lt;strong&gt;subsidiary&lt;/strong&gt; relationship.">franchise</button>
+    <button class="btn" data-q="vq7" data-blank="vb7" data-val="joint venture" data-ans="subsidiary" data-sec="V" data-msg="A joint venture is a temporary partnership between two companies. Pilão is fully owned by JDE Peet's — it's a &lt;strong&gt;subsidiary&lt;/strong&gt;.">joint venture</button>
+  </div><div class="fb" id="vf7"></div>
+</div></div>
+
+<div class="qcard" id="vq8"><div class="qn">V8 <span class="qmark" id="vm8"></span></div><div class="qb">
+  <p class="qs">"Do you have <span class="blank" id="vb8">_______</span> to review the deck before Friday? I know you've been heads-down."</p>
+  <div class="choices" id="vc8">
+    <button class="btn" data-q="vq8" data-blank="vb8" data-val="bandwidth" data-ans="bandwidth" data-sec="V" data-msg="&lt;strong&gt;Bandwidth&lt;/strong&gt; = capacity to take on work. 'Do you have bandwidth?' = do you have the time and mental space for this? Very common in corporate settings.">bandwidth</button>
+    <button class="btn" data-q="vq8" data-blank="vb8" data-val="time" data-ans="bandwidth" data-sec="V" data-msg="'Time' works but is generic. &lt;strong&gt;Bandwidth&lt;/strong&gt; is the professional corporate expression — it includes both time and cognitive capacity.">time</button>
+    <button class="btn" data-q="vq8" data-blank="vb8" data-val="energy" data-ans="bandwidth" data-sec="V" data-msg="'Energy' is too personal/informal. The professional expression for capacity to take on work is &lt;strong&gt;bandwidth&lt;/strong&gt;.">energy</button>
+  </div><div class="fb" id="vf8"></div>
+</div></div>
+
+<div class="qcard" id="vq9"><div class="qn">V9 <span class="qmark" id="vm9"></span></div><div class="qb">
+  <p class="qs">"We've been in back-to-backs all week but nothing has <span class="blank" id="vb9">_______</span> — we're still in the same place we were last Monday."</p>
+  <div class="choices" id="vc9">
+    <button class="btn" data-q="vq9" data-blank="vb9" data-val="moved the needle" data-ans="moved the needle" data-sec="V" data-msg="&lt;strong&gt;Move the needle&lt;/strong&gt; = make meaningful progress, change things significantly. 'Nothing has moved the needle' = all those meetings produced no real results.">moved the needle</button>
+    <button class="btn" data-q="vq9" data-blank="vb9" data-val="changed" data-ans="moved the needle" data-sec="V" data-msg="'Changed' is too general. &lt;strong&gt;Move the needle&lt;/strong&gt; is the specific corporate idiom for making meaningful progress toward a goal.">changed</button>
+    <button class="btn" data-q="vq9" data-blank="vb9" data-val="worked" data-ans="moved the needle" data-sec="V" data-msg="'Worked' is vague. The idiomatic expression is &lt;strong&gt;move the needle&lt;/strong&gt; — used specifically when you want to say that no real progress has been made.">worked</button>
+  </div><div class="fb" id="vf9"></div>
+</div></div>
+
+<div class="qcard" id="vq10"><div class="qn">V10 <span class="qmark" id="vm10"></span></div><div class="qb">
+  <p class="qs">What is the difference between a <strong>shareholder</strong> and a <strong>stakeholder</strong>?</p>
+  <div class="choices col" id="vc10">
+    <button class="btn btn-lg" data-q="vq10" data-blank="" data-val="A" data-ans="A" data-sec="V" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; A shareholder owns equity (shares). A stakeholder is anyone affected by the company — employees, community, government, customers. All shareholders are stakeholders but not vice versa.">A: A shareholder owns shares (equity). A stakeholder is anyone affected by or with an interest in the company — including employees, communities, and governments.</button>
+    <button class="btn btn-lg" data-q="vq10" data-blank="" data-val="B" data-ans="A" data-sec="V" data-msg="B is backwards. &lt;strong&gt;Stakeholders&lt;/strong&gt; is the broader category. &lt;strong&gt;Shareholders&lt;/strong&gt; are a specific type of stakeholder — those who own shares.">B: They mean the same thing — both refer to people who own shares in a company.</button>
+    <button class="btn btn-lg" data-q="vq10" data-blank="" data-val="C" data-ans="A" data-sec="V" data-msg="C confuses the two. Stakeholders are typically LESS powerful than majority shareholders in decision-making — shareholders vote, most stakeholders don't.">C: A stakeholder has more power than a shareholder because they represent a larger group.</button>
+  </div><div class="fb" id="vf10"></div>
+</div></div>
+
+<div style="text-align:right;margin-top:1rem">
+  <button class="tbtn primary" onclick="go('t2',document.getElementById('nav2'))">Next: Grammar →</button>
+</div>
+</div>
+
+<!-- ========================
+     TAB 2: GRAMMAR (10 q)
+======================== -->
+<div class="page" id="t2">
+<div class="sh">
+  <div class="sh-icon" style="background:var(--b1l)">📐</div>
+  <div class="sh-meta">
+    <p class="sh-title">Section 2 — Grammar</p>
+    <p class="sh-info">10 questions &middot; Present Perfect vs PPC &middot; Modal verbs</p>
+  </div>
+  <span class="sh-timer">~10 min</span>
+</div>
+<div class="prow"><div class="pwrap"><div class="pfill" id="pf2"></div></div><span class="ptxt" id="pl2">0 / 10</span></div>
+
+<div class="sl">Present Perfect vs Present Perfect Continuous</div>
+
+<div class="qcard" id="gq1"><div class="qn">G1 <span class="qmark" id="gm1"></span></div><div class="qb">
+  <p class="qctx">In a meeting</p>
+  <p class="qs">"I <span class="blank" id="gb1">_______</span> (work) on the Pilão brief all week — it's finally ready."</p>
+  <div class="choices" id="gc1">
+    <button class="btn" data-q="gq1" data-blank="gb1" data-val="'ve been working" data-ans="'ve been working" data-sec="G" data-msg="&lt;strong&gt;I've been working&lt;/strong&gt; — PPC. 'All week' signals duration, and the focus is on the ongoing process (which explains why it's finally done). Even though it's now finished, you're describing the effort — so PPC is natural.">I've been working</button>
+    <button class="btn" data-q="gq1" data-blank="gb1" data-val="'ve worked" data-ans="'ve been working" data-sec="G" data-msg="PP is possible but PPC is more natural here — 'all week' signals a duration of effort. &lt;strong&gt;I've been working&lt;/strong&gt; captures the sustained process more expressively.">I've worked</button>
+    <button class="btn" data-q="gq1" data-blank="gb1" data-val="worked" data-ans="'ve been working" data-sec="G" data-msg="Simple past 'worked' needs a finished time reference. 'All week' with present relevance ('it's finally ready') calls for &lt;strong&gt;Present Perfect Continuous&lt;/strong&gt;.">worked</button>
+  </div><div class="fb" id="gf1"></div>
+</div></div>
+
+<div class="qcard" id="gq2"><div class="qn">G2 <span class="qmark" id="gm2"></span></div><div class="qb">
+  <p class="qctx">Slack message</p>
+  <p class="qs">"Hey David — I <span class="blank" id="gb2">_______</span> (just / send) you the final version. Let me know what you think."</p>
+  <div class="choices" id="gc2">
+    <button class="btn" data-q="gq2" data-blank="gb2" data-val="'ve just sent" data-ans="'ve just sent" data-sec="G" data-msg="&lt;strong&gt;I've just sent&lt;/strong&gt; — PP. 'Just' is a classic PP signal — the action is recently completed with clear present relevance (the file is now in his inbox).">I've just sent</button>
+    <button class="btn" data-q="gq2" data-blank="gb2" data-val="'ve been sending" data-ans="'ve just sent" data-sec="G" data-msg="PPC suggests a repeated or ongoing process. 'Just' signals a single completed action — use &lt;strong&gt;I've just sent&lt;/strong&gt; (PP).">I've been sending</button>
+    <button class="btn" data-q="gq2" data-blank="gb2" data-val="sent" data-ans="'ve just sent" data-sec="G" data-msg="Simple past 'sent' is too abrupt in professional written English. &lt;strong&gt;I've just sent&lt;/strong&gt; connects the past action to the present moment naturally.">sent</button>
+  </div><div class="fb" id="gf2"></div>
+</div></div>
+
+<div class="qcard" id="gq3"><div class="qn">G3 <span class="qmark" id="gm3"></span></div><div class="qb">
+  <p class="qs">"I <span class="blank" id="gb3">_______</span> (try) to touch base with him since Monday — he hasn't replied yet."</p>
+  <div class="choices" id="gc3">
+    <button class="btn" data-q="gq3" data-blank="gb3" data-val="'ve been trying" data-ans="'ve been trying" data-sec="G" data-msg="&lt;strong&gt;I've been trying&lt;/strong&gt; — PPC. 'Since Monday' signals a duration from a past point to now. PPC = sustained effort over time. The frustration in the sentence also points to ongoing, repeated attempts.">I've been trying</button>
+    <button class="btn" data-q="gq3" data-blank="gb3" data-val="'ve tried" data-ans="'ve been trying" data-sec="G" data-msg="'I've tried' (PP) would suggest one completed attempt. 'Since Monday' implies multiple, ongoing attempts — so &lt;strong&gt;I've been trying&lt;/strong&gt; (PPC) is more natural.">I've tried</button>
+    <button class="btn" data-q="gq3" data-blank="gb3" data-val="tried" data-ans="'ve been trying" data-sec="G" data-msg="Simple past 'tried' implies it's over. But he still hasn't replied — it's still ongoing. Use &lt;strong&gt;I've been trying&lt;/strong&gt; (PPC) to show the effort is continuing.">tried</button>
+  </div><div class="fb" id="gf3"></div>
+</div></div>
+
+<div class="qcard" id="gq4"><div class="qn">G4 <span class="qmark" id="gm4"></span></div><div class="qb">
+  <p class="qs">"I <span class="blank" id="gb4">_______</span> (decide) to pass on this one — please keep me in the loop."</p>
+  <div class="choices" id="gc4">
+    <button class="btn" data-q="gq4" data-blank="gb4" data-val="'ve decided" data-ans="'ve decided" data-sec="G" data-msg="&lt;strong&gt;I've decided&lt;/strong&gt; — PP. 'Decide' is a one-time mental action (not a process), so PP is correct. The decision is completed and immediately relevant — you're communicating it right now.">I've decided</button>
+    <button class="btn" data-q="gq4" data-blank="gb4" data-val="'ve been deciding" data-ans="'ve decided" data-sec="G" data-msg="'I've been deciding' is unnatural — 'decide' is typically a one-time event, not an ongoing process. You wouldn't normally say you've been 'deciding' something. Use &lt;strong&gt;I've decided&lt;/strong&gt; (PP).">I've been deciding</button>
+    <button class="btn" data-q="gq4" data-blank="gb4" data-val="decided" data-ans="'ve decided" data-sec="G" data-msg="Simple past 'decided' is too informal for a professional message. &lt;strong&gt;I've decided&lt;/strong&gt; (PP) keeps the present connection — you're informing them now.">decided</button>
+  </div><div class="fb" id="gf4"></div>
+</div></div>
+
+<div class="qcard" id="gq5"><div class="qn">G5 &mdash; spot the error <span class="qmark" id="gm5"></span></div><div class="qb">
+  <div class="choices col" id="gc5">
+    <button class="btn btn-lg" data-q="gq5" data-blank="" data-val="A" data-ans="B" data-sec="G" data-msg="&lt;strong&gt;B has the error.&lt;/strong&gt; A is correct — 'I've been working on the deliverables' (PPC) is natural for an ongoing process.">A: "I've been working on the deliverables all sprint — they're almost done."</button>
+    <button class="btn btn-lg" data-q="gq5" data-blank="" data-val="B" data-ans="B" data-sec="G" data-msg="&lt;strong&gt;Correct — B has the error.&lt;/strong&gt; 'I've been knowing' is wrong — &lt;strong&gt;know&lt;/strong&gt; is a state verb and cannot be used in the continuous form. Correct: &lt;strong&gt;I've known David for two years.&lt;/strong&gt;">B: "I've been knowing David for two years — he's very reliable."</button>
+  </div><div class="fb" id="gf5"></div>
+</div></div>
+
+<div class="sl" style="margin-top:2rem">Modal verbs</div>
+
+<div class="qcard" id="gq6"><div class="qn">G6 <span class="qmark" id="gm6"></span></div><div class="qb">
+  <p class="qctx">Expressing strong probability</p>
+  <p class="qs">"She <span class="blank" id="gb6">_______</span> have received the email — I sent it two days ago and got a read receipt."</p>
+  <div class="choices" id="gc6">
+    <button class="btn" data-q="gq6" data-blank="gb6" data-val="must" data-ans="must" data-sec="G" data-msg="&lt;strong&gt;Must have&lt;/strong&gt; = strong logical deduction that something happened. You have evidence (read receipt) — so you're not just guessing, you're concluding.">must</button>
+    <button class="btn" data-q="gq6" data-blank="gb6" data-val="might" data-ans="must" data-sec="G" data-msg="'Might have' expresses possibility — you're unsure. But you have strong evidence here (read receipt), so &lt;strong&gt;must have&lt;/strong&gt; is the right level of certainty.">might</button>
+    <button class="btn" data-q="gq6" data-blank="gb6" data-val="could" data-ans="must" data-sec="G" data-msg="'Could have' suggests possibility from the past. Since you have strong evidence, use &lt;strong&gt;must have&lt;/strong&gt; to express logical certainty.">could</button>
+  </div><div class="fb" id="gf6"></div>
+</div></div>
+
+<div class="qcard" id="gq7"><div class="qn">G7 <span class="qmark" id="gm7"></span></div><div class="qb">
+  <p class="qctx">Giving advice about a past situation</p>
+  <p class="qs">"You <span class="blank" id="gb7">_______</span> told HQ earlier — waiting until the last minute made everything more complicated."</p>
+  <div class="choices" id="gc7">
+    <button class="btn" data-q="gq7" data-blank="gb7" data-val="should have" data-ans="should have" data-sec="G" data-msg="&lt;strong&gt;Should have&lt;/strong&gt; = the right thing to do in the past, but it didn't happen. Used for advice or mild criticism about past decisions. The past didn't happen that way — but it should have.">should have</button>
+    <button class="btn" data-q="gq7" data-blank="gb7" data-val="must have" data-ans="should have" data-sec="G" data-msg="'Must have' expresses deduction — concluding something happened. Here you're giving advice about what should have been done. Use &lt;strong&gt;should have&lt;/strong&gt;.">must have</button>
+    <button class="btn" data-q="gq7" data-blank="gb7" data-val="might have" data-ans="should have" data-sec="G" data-msg="'Might have' expresses past possibility — uncertain. Here the speaker is clear about what the right action was. Use &lt;strong&gt;should have&lt;/strong&gt; for advice about the past.">might have</button>
+  </div><div class="fb" id="gf7"></div>
+</div></div>
+
+<div class="qcard" id="gq8"><div class="qn">G8 <span class="qmark" id="gm8"></span></div><div class="qb">
+  <p class="qctx">Expressing uncertainty</p>
+  <p class="qs">"The HQ team <span class="blank" id="gb8">_______</span> have misunderstood the brief — the direction they're going in doesn't match what we discussed."</p>
+  <div class="choices" id="gc8">
+    <button class="btn" data-q="gq8" data-blank="gb8" data-val="might" data-ans="might" data-sec="G" data-msg="&lt;strong&gt;Might have&lt;/strong&gt; = past possibility you're not certain about. You're speculating about why they went in a different direction — you're not sure, just suggesting a possibility.">might</button>
+    <button class="btn" data-q="gq8" data-blank="gb8" data-val="must" data-ans="might" data-sec="G" data-msg="'Must have' would mean you're almost certain they misunderstood. But the phrasing suggests uncertainty — 'doesn't match' is evidence but not proof. &lt;strong&gt;Might have&lt;/strong&gt; is the right degree of certainty.">must</button>
+    <button class="btn" data-q="gq8" data-blank="gb8" data-val="should" data-ans="might" data-sec="G" data-msg="'Should have' expresses what the right action was — not uncertainty about what happened. Use &lt;strong&gt;might have&lt;/strong&gt; when you're speculating about a possible past event.">should</button>
+  </div><div class="fb" id="gf8"></div>
+</div></div>
+
+<div class="qcard" id="gq9"><div class="qn">G9 <span class="qmark" id="gm9"></span></div><div class="qb">
+  <p class="qs">"The campaign results are excellent. She <span class="blank" id="gb9">_______</span> worked incredibly hard on this — it really shows."</p>
+  <div class="choices" id="gc9">
+    <button class="btn" data-q="gq9" data-blank="gb9" data-val="must have" data-ans="must have" data-sec="G" data-msg="&lt;strong&gt;Must have worked&lt;/strong&gt; = strong deduction based on the evidence (excellent results). You didn't see the work directly, but the outcome is so good that you're logically concluding she worked very hard.">must have</button>
+    <button class="btn" data-q="gq9" data-blank="gb9" data-val="should have" data-ans="must have" data-sec="G" data-msg="'Should have' implies it was the right thing to do but perhaps didn't happen. Here you're making a positive deduction — the results are great evidence. Use &lt;strong&gt;must have&lt;/strong&gt;.">should have</button>
+    <button class="btn" data-q="gq9" data-blank="gb9" data-val="could have" data-ans="must have" data-sec="G" data-msg="'Could have' suggests possibility without evidence. Here you have strong evidence (excellent results), so &lt;strong&gt;must have&lt;/strong&gt; — confident logical deduction — is the right choice.">could have</button>
+  </div><div class="fb" id="gf9"></div>
+</div></div>
+
+<div class="qcard" id="gq10"><div class="qn">G10 &mdash; which sentence is correct? <span class="qmark" id="gm10"></span></div><div class="qb">
+  <div class="choices col" id="gc10">
+    <button class="btn btn-lg" data-q="gq10" data-blank="" data-val="A" data-ans="B" data-sec="G" data-msg="&lt;strong&gt;B is correct.&lt;/strong&gt; A uses 'should have' for past probability — but 'should have' expresses obligation/advice, not probability. For strong probability about a past event, use 'must have'.">A: "They should have received the brief by now — I sent it yesterday."</button>
+    <button class="btn btn-lg" data-q="gq10" data-blank="" data-val="B" data-ans="B" data-sec="G" data-msg="&lt;strong&gt;Correct — B is right.&lt;/strong&gt; 'Might have caused' = past possibility — you're speculating about what may have happened. This is the correct use of 'might have' for uncertain past situations.">B: "The miscommunication might have caused the delay — we should investigate."</button>
+  </div><div class="fb" id="gf10"></div>
+</div></div>
+
+<div style="text-align:right;margin-top:1rem">
+  <button class="tbtn primary" onclick="go('t3',document.getElementById('nav3'))">Next: Reading →</button>
+</div>
+</div>
+
+<!-- ========================
+     TAB 3: READING (7 q)
+======================== -->
+<div class="page" id="t3">
+<div class="sh">
+  <div class="sh-icon" style="background:var(--b2l)">📖</div>
+  <div class="sh-meta">
+    <p class="sh-title">Section 3 — Reading</p>
+    <p class="sh-info">Read the passage &middot; answer 7 questions</p>
+  </div>
+  <span class="sh-timer">~8 min</span>
+</div>
+<div class="prow"><div class="pwrap"><div class="pfill" id="pf3"></div></div><span class="ptxt" id="pl3">0 / 7</span></div>
+
+<div class="passage">
+  <h3>The Meeting Paradox</h3>
+  <p>Meetings are supposed to help companies run more smoothly. Yet for many professionals, especially those working in <span class="hl">multinational</span> corporations, back-to-back meetings have become one of the biggest barriers to actually getting work done. Research from Microsoft suggests that the average knowledge worker spends over 57% of their working time in meetings or on email — leaving fewer than half of working hours for focused, independent work.</p>
+  <p>The problem is structural. In large organisations — whether a <span class="hl">public limited company</span> with shareholders to satisfy or a fast-growing <span class="hl">start-up</span> trying to stay aligned across teams — the number of meetings tends to increase as companies scale. What begins as a daily standup becomes a weekly sync, which becomes a monthly review, which gradually fills every available hour in the calendar.</p>
+  <p>Some professionals have started pushing back. A growing number of workers — particularly in marketing, product, and strategy roles — have started <span class="hl">keeping their calendars lean</span> by design, <span class="hl">passing on</span> meetings where their attendance is not essential and <span class="hl">contributing asynchronously</span> instead. They argue that a well-written document or a recorded update can often <span class="hl">suffice</span> where a live meeting would eat into the same time budget without producing better outcomes.</p>
+  <p>Managers, however, are not always convinced. From a leadership perspective, presence signals commitment. Particularly in <span class="hl">family businesses</span> or organisations with more traditional hierarchies, being seen to attend — and being visible in decision-making conversations — can still carry as much weight as the quality of one's actual output. The tension between visibility and productivity may be one of the defining workplace challenges of the decade.</p>
+</div>
+
+<div class="sl">Comprehension questions</div>
+
+<div class="qcard" id="rq1"><div class="qn">R1 <span class="qmark" id="rm1"></span></div><div class="qb">
+  <p class="qs">According to the text, what percentage of working time does the average knowledge worker spend in meetings or on email?</p>
+  <div class="choices" id="rc1">
+    <button class="btn" data-q="rq1" data-blank="" data-val="Over 57%" data-ans="Over 57%" data-sec="R" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; The text states: 'the average knowledge worker spends over 57% of their working time in meetings or on email.'">Over 57%</button>
+    <button class="btn" data-q="rq1" data-blank="" data-val="Under 50%" data-ans="Over 57%" data-sec="R" data-msg="The text says &lt;strong&gt;over 57%&lt;/strong&gt; — more than half. Less than 50% is left for focused, independent work.">Under 50%</button>
+    <button class="btn" data-q="rq1" data-blank="" data-val="About 30%" data-ans="Over 57%" data-sec="R" data-msg="The figure in the text is &lt;strong&gt;over 57%&lt;/strong&gt;, not 30%.">About 30%</button>
+  </div><div class="fb" id="rf1"></div>
+</div></div>
+
+<div class="qcard" id="rq2"><div class="qn">R2 <span class="qmark" id="rm2"></span></div><div class="qb">
+  <p class="qs">The text describes the growth of meetings as "structural." What does this mean in context?</p>
+  <div class="choices col" id="rc2">
+    <button class="btn btn-lg" data-q="rq2" data-blank="" data-val="A" data-ans="A" data-sec="R" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; 'Structural' here means it's built into how large organisations function — not just a bad habit, but a systematic tendency that grows with scale.">A: The problem is built into how large organisations work — it tends to get worse as companies grow.</button>
+    <button class="btn btn-lg" data-q="rq2" data-blank="" data-val="B" data-ans="A" data-sec="R" data-msg="The text doesn't attribute the problem to bad management — it says it's &lt;strong&gt;structural&lt;/strong&gt;, meaning it's inherent to how organisations scale.">B: The problem is caused by poor management decisions in individual companies.</button>
+    <button class="btn btn-lg" data-q="rq2" data-blank="" data-val="C" data-ans="A" data-sec="R" data-msg="The text doesn't distinguish between company types here — it says the problem affects any large organisation, whether a PLC or a start-up.">C: The problem only exists in public companies, not in start-ups or family businesses.</button>
+  </div><div class="fb" id="rf2"></div>
+</div></div>
+
+<div class="qcard" id="rq3"><div class="qn">R3 <span class="qmark" id="rm3"></span></div><div class="qb">
+  <p class="qs">According to the text, what is one way professionals are responding to meeting overload?</p>
+  <div class="choices col" id="rc3">
+    <button class="btn btn-lg" data-q="rq3" data-blank="" data-val="A" data-ans="A" data-sec="R" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; The text specifically mentions 'keeping their calendars lean', 'passing on meetings where their attendance is not essential', and 'contributing asynchronously instead.'">A: Intentionally declining non-essential meetings and contributing through documents or recordings instead.</button>
+    <button class="btn btn-lg" data-q="rq3" data-blank="" data-val="B" data-ans="A" data-sec="R" data-msg="The text doesn't say professionals are leaving their jobs. It says some are &lt;strong&gt;choosing not to attend&lt;/strong&gt; certain meetings and working asynchronously.">B: Leaving large organisations to work for smaller start-ups with fewer meetings.</button>
+    <button class="btn btn-lg" data-q="rq3" data-blank="" data-val="C" data-ans="A" data-sec="R" data-msg="The text doesn't mention shortening meetings — it mentions &lt;strong&gt;skipping them entirely&lt;/strong&gt; when presence isn't essential.">C: Asking managers to make meetings shorter and more focused.</button>
+  </div><div class="fb" id="rf3"></div>
+</div></div>
+
+<div class="qcard" id="rq4"><div class="qn">R4 <span class="qmark" id="rm4"></span></div><div class="qb">
+  <p class="qs">Why are managers not always convinced by the asynchronous approach, according to the text?</p>
+  <div class="choices col" id="rc4">
+    <button class="btn btn-lg" data-q="rq4" data-blank="" data-val="A" data-ans="A" data-sec="R" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; The text says: 'presence signals commitment' — especially in family businesses or traditional hierarchies, being visible in meetings can 'carry as much weight as the quality of one's actual output.'">A: In many organisations, being visibly present in meetings is still seen as a sign of commitment — as important as actual output.</button>
+    <button class="btn btn-lg" data-q="rq4" data-blank="" data-val="B" data-ans="A" data-sec="R" data-msg="The text doesn't say managers are worried about legal issues. The concern is about &lt;strong&gt;visibility and perceived commitment&lt;/strong&gt;, not legal matters.">B: Managers are worried that asynchronous contributions might cause legal or compliance issues.</button>
+    <button class="btn btn-lg" data-q="rq4" data-blank="" data-val="C" data-ans="A" data-sec="R" data-msg="The text doesn't say asynchronous methods are less effective — it actually suggests they can 'produce better outcomes' in some cases. The manager's concern is about &lt;strong&gt;visibility&lt;/strong&gt;, not effectiveness.">C: Asynchronous methods have been proven to produce lower-quality work than live meetings.</button>
+  </div><div class="fb" id="rf4"></div>
+</div></div>
+
+<div class="sl" style="margin-top:2rem">Vocabulary in context</div>
+
+<div class="qcard" id="rq5"><div class="qn">R5 <span class="qmark" id="rm5"></span></div><div class="qb">
+  <p class="qs">In the sentence "a well-written document can often <strong>suffice</strong>", what does "suffice" mean?</p>
+  <div class="choices" id="rc5">
+    <button class="btn" data-q="rq5" data-blank="" data-val="be sufficient / be enough" data-ans="be sufficient / be enough" data-sec="R" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; Suffice = be sufficient or be enough for the purpose. It's slightly more formal than 'be enough' — precise and appropriate for professional written English.">be sufficient / be enough</button>
+    <button class="btn" data-q="rq5" data-blank="" data-val="be better" data-ans="be sufficient / be enough" data-sec="R" data-msg="'Suffice' doesn't mean 'be better' — it means 'be adequate' or 'meet the need'. It's not a comparison.">be better</button>
+    <button class="btn" data-q="rq5" data-blank="" data-val="be necessary" data-ans="be sufficient / be enough" data-sec="R" data-msg="'Necessary' means required. 'Suffice' means adequate — meeting the need without implying it's required.">be necessary</button>
+  </div><div class="fb" id="rf5"></div>
+</div></div>
+
+<div class="qcard" id="rq6"><div class="qn">R6 <span class="qmark" id="rm6"></span></div><div class="qb">
+  <p class="qs">The text mentions "the tension between visibility and productivity." In your own words — what is this tension?</p>
+  <div class="choices col" id="rc6">
+    <button class="btn btn-lg" data-q="rq6" data-blank="" data-val="A" data-ans="A" data-sec="R" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; That's exactly the tension: being seen in meetings signals commitment (visibility) but may reduce time for actual work (productivity). The two goals can conflict.">A: To be seen as committed (attend meetings), you may sacrifice time for real work. But if you prioritise real work, you may appear less engaged.</button>
+    <button class="btn btn-lg" data-q="rq6" data-blank="" data-val="B" data-ans="A" data-sec="R" data-msg="The text doesn't discuss visible vs invisible work in this way. The tension is specifically between &lt;strong&gt;being seen in meetings&lt;/strong&gt; and &lt;strong&gt;having time to produce&lt;/strong&gt;.">B: The difference between working in an open-plan office (visible) vs working from home (less visible).</button>
+  </div><div class="fb" id="rf6"></div>
+</div></div>
+
+<div class="qcard" id="rq7"><div class="qn">R7 <span class="qmark" id="rm7"></span></div><div class="qb">
+  <p class="qs">The text mentions three company types: multinational, PLC, and start-up. What do they all have in common in terms of the meeting problem?</p>
+  <div class="choices col" id="rc7">
+    <button class="btn btn-lg" data-q="rq7" data-blank="" data-val="A" data-ans="A" data-sec="R" data-msg="&lt;strong&gt;Correct!&lt;/strong&gt; The text uses all three types to show the problem affects any kind of large or growing organisation — 'whether a PLC... or a fast-growing start-up'. The meeting problem is not limited to one company type.">A: All three face the same tendency for meetings to multiply as the organisation grows — the meeting problem is not unique to one company type.</button>
+    <button class="btn btn-lg" data-q="rq7" data-blank="" data-val="B" data-ans="A" data-sec="R" data-msg="The text doesn't say these companies have better solutions. It uses them as examples to show the problem is &lt;strong&gt;universal across company types&lt;/strong&gt;.">B: All three have developed special techniques for reducing meeting overload that other company types haven't adopted yet.</button>
+  </div><div class="fb" id="rf7"></div>
+</div></div>
+
+<div style="text-align:right;margin-top:1rem">
+  <button class="tbtn primary" onclick="go('t4',document.getElementById('nav4'))">Next: Practice →</button>
+</div>
+</div>
+
+<!-- ========================
+     TAB 4: PRACTICE (8 q)
+======================== -->
+<div class="page" id="t4">
+<div class="sh">
+  <div class="sh-icon" style="background:var(--pl)">✍️</div>
+  <div class="sh-meta">
+    <p class="sh-title">Section 4 — Practice</p>
+    <p class="sh-info">8 questions &middot; translation, error correction, rewriting</p>
+  </div>
+  <span class="sh-timer">~10 min</span>
+</div>
+<div class="prow"><div class="pwrap"><div class="pfill" id="pf4"></div></div><span class="ptxt" id="pl4">0 / 8</span></div>
+
+<div class="sl">Which is the most professional version?</div>
+
+<div class="qcard" id="pq1"><div class="qn">P1 <span class="qmark" id="pm1"></span></div><div class="qb">
+  <p class="qctx">You want to decline a meeting from HQ — professional email</p>
+  <div class="choices col" id="pc1">
+    <button class="btn btn-lg" data-q="pq1" data-blank="" data-val="A" data-ans="A" data-sec="P" data-msg="&lt;strong&gt;Correct — A is strongest.&lt;/strong&gt; Uses 'I've been juggling' (PPC — ongoing overload), 'I've decided to pass on' (PP — completed decision), 'keep me in the loop' (lesson vocabulary), and 'contribute asynchronously' (modern, professional). All four elements work together naturally.">A: "I've been juggling several deliverables this sprint and I've decided to pass on this one. Please keep me in the loop on key outcomes — happy to contribute asynchronously once I've reviewed the summary."</button>
+    <button class="btn btn-lg" data-q="pq1" data-blank="" data-val="B" data-ans="A" data-sec="P" data-msg="&lt;strong&gt;A is much stronger.&lt;/strong&gt; B is too informal ('really busy', 'can't go', 'send me notes') and uses no lesson vocabulary. A shows vocabulary range, precise grammar, and professional tone.">B: "I'm really busy this week and can't go to the meeting. Please send me the notes after."</button>
+  </div><div class="fb" id="pf1"></div>
+</div></div>
+
+<div class="qcard" id="pq2"><div class="qn">P2 <span class="qmark" id="pm2"></span></div><div class="qb">
+  <p class="qctx">End-of-week update to your manager</p>
+  <div class="choices col" id="pc2">
+    <button class="btn btn-lg" data-q="pq2" data-blank="" data-val="A" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;B is stronger.&lt;/strong&gt; A uses simple past throughout ('worked', 'sent', 'passed') — disconnects actions from the present moment. In a live update, PP and PPC keep everything relevant and current.">A: "This week I worked on the Pilão brief, sent it to design, and passed on a few syncs. I added my comments to the shared doc."</button>
+    <button class="btn btn-lg" data-q="pq2" data-blank="" data-val="B" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;Correct — B is stronger.&lt;/strong&gt; 'I've been heads-down' (PPC — ongoing state), 'I've already sent' (PP + already — completed result), 'I've passed on' (PP — deliberate decision), 'I've been contributing asynchronously' (PPC — ongoing behaviour). All tenses serve a precise purpose.">B: "I've been heads-down on the Pilão brief all week — I've already sent it to design. I've passed on a few syncs but I've been contributing asynchronously. All my notes are in the shared doc."</button>
+  </div><div class="fb" id="pf2"></div>
+</div></div>
+
+<div class="sl" style="margin-top:2rem">Error correction — find the mistake</div>
+
+<div class="qcard" id="pq3"><div class="qn">P3 <span class="qmark" id="pm3"></span></div><div class="qb">
+  <p class="qs">One of these sentences has an error. Which one?</p>
+  <div class="choices col" id="pc3">
+    <button class="btn btn-lg" data-q="pq3" data-blank="" data-val="A" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;B has the error.&lt;/strong&gt; A is correct — 'I've been trying to touch base' (PPC) is natural for ongoing repeated attempts.">A: "I've been trying to touch base with him for a week — he hasn't replied yet."</button>
+    <button class="btn btn-lg" data-q="pq3" data-blank="" data-val="B" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;Correct — B has the error.&lt;/strong&gt; 'Bow out from' is incorrect. The correct preposition is always &lt;strong&gt;bow out OF&lt;/strong&gt; something. 'I'll have to bow out of this session.'">B: "I'll have to bow out from the Thursday meeting — my plate is full."</button>
+  </div><div class="fb" id="pf3"></div>
+</div></div>
+
+<div class="qcard" id="pq4"><div class="qn">P4 <span class="qmark" id="pm4"></span></div><div class="qb">
+  <p class="qs">One of these sentences has an error. Which one?</p>
+  <div class="choices col" id="pc4">
+    <button class="btn btn-lg" data-q="pq4" data-blank="" data-val="A" data-ans="A" data-sec="P" data-msg="&lt;strong&gt;Correct — A has the error.&lt;/strong&gt; 'Too much meetings' is wrong — 'meetings' is a countable noun, so it must be 'too &lt;strong&gt;many&lt;/strong&gt; meetings'. B is correct.">A: "I'm concerned I may be juggling too much meetings at the moment."</button>
+    <button class="btn btn-lg" data-q="pq4" data-blank="" data-val="B" data-ans="A" data-sec="P" data-msg="&lt;strong&gt;A has the error.&lt;/strong&gt; B is perfectly correct — 'juggling too many priorities this quarter' is grammatically accurate and natural.">B: "I've been juggling too many priorities this quarter and it's affecting my focus."</button>
+  </div><div class="fb" id="pf4"></div>
+</div></div>
+
+<div class="qcard" id="pq5"><div class="qn">P5 <span class="qmark" id="pm5"></span></div><div class="qb">
+  <p class="qs">One of these sentences has an error. Which one?</p>
+  <div class="choices col" id="pc5">
+    <button class="btn btn-lg" data-q="pq5" data-blank="" data-val="A" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;B has the error.&lt;/strong&gt; A is correct — 'must have caused' is accurate for a strong deduction based on evidence.">A: "The delay must have caused the team to miss the deadline — the timeline was too tight from the start."</button>
+    <button class="btn btn-lg" data-q="pq5" data-blank="" data-val="B" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;Correct — B has the error.&lt;/strong&gt; 'Should have received' is often used for probability, but it's technically incorrect for this meaning — it implies an obligation, not a deduction. The correct form for probability is &lt;strong&gt;must have received&lt;/strong&gt; (strong deduction) or &lt;strong&gt;should have received by now&lt;/strong&gt; (expectation). In this context, 'must have received' is stronger and more precise.">B: "She should have received the email — I sent it two days ago with a read receipt."</button>
+  </div><div class="fb" id="pf5"></div>
+</div></div>
+
+<div class="sl" style="margin-top:2rem">Translate into professional English</div>
+
+<div class="qcard" id="pq6"><div class="qn">P6 <span class="qmark" id="pm6"></span></div><div class="qb">
+  <p class="qctx">Caroline wrote: "I think I may not be necessary in this meeting."</p>
+  <p class="qs">Choose the most professional and confident version:</p>
+  <div class="choices col" id="pc6">
+    <button class="btn btn-lg" data-q="pq6" data-blank="" data-val="A" data-ans="C" data-sec="P" data-msg="&lt;strong&gt;C is the strongest.&lt;/strong&gt; A is correct but passive — 'I don't think my presence is needed' is slightly weak. C is confident and proactive — it offers an alternative (asynchronous contribution) and reframes absence as a strategic choice.">A: "I don't think my presence is needed for this particular meeting."</button>
+    <button class="btn btn-lg" data-q="pq6" data-blank="" data-val="B" data-ans="C" data-sec="P" data-msg="&lt;strong&gt;C is the strongest.&lt;/strong&gt; B uses the right vocabulary but 'I trust you'll cover it' is slightly presumptuous. C is more precise and professional, clearly offering an alternative.">B: "I'm going to pass on this one — I trust you'll cover it. Just keep me in the loop."</button>
+    <button class="btn btn-lg" data-q="pq6" data-blank="" data-val="C" data-ans="C" data-sec="P" data-msg="&lt;strong&gt;Correct — C is the strongest.&lt;/strong&gt; 'My input may not add value in real time' is confident without being dismissive. 'Sit this one out' + 'contribute asynchronously' + 'review the summary' shows initiative. The whole response frames absence as a deliberate, strategic decision.">C: "Given the strategic level of this discussion, my input may not add value in real time — I'd prefer to sit this one out and contribute asynchronously once I've reviewed the summary."</button>
+  </div><div class="fb" id="pf6"></div>
+</div></div>
+
+<div class="qcard" id="pq7"><div class="qn">P7 <span class="qmark" id="pm7"></span></div><div class="qb">
+  <p class="qctx">Company types</p>
+  <p class="qs">Which sentence most accurately describes the relationship between JDE Peet's and Café Pilão using the correct vocabulary?</p>
+  <div class="choices col" id="pc7">
+    <button class="btn btn-lg" data-q="pq7" data-blank="" data-val="A" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;B is correct.&lt;/strong&gt; A confuses the relationship — JDE Peet's is the parent company, and Pilão is the subsidiary. A has it backwards.">A: "Café Pilão is the parent company of JDE Peet's, which acts as a subsidiary for the Brazilian market."</button>
+    <button class="btn btn-lg" data-q="pq7" data-blank="" data-val="B" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;Correct — B is accurate.&lt;/strong&gt; JDE Peet's is the multinational parent company, headquartered in Europe. Café Pilão operates as the Brazilian subsidiary — with local autonomy but answering to the European HQ.">B: "JDE Peet's is a multinational corporation headquartered in Europe. Café Pilão is a Brazilian subsidiary — it operates locally but reports to the parent company."</button>
+    <button class="btn btn-lg" data-q="pq7" data-blank="" data-val="C" data-ans="B" data-sec="P" data-msg="&lt;strong&gt;B is correct.&lt;/strong&gt; C confuses franchise with subsidiary. Pilão is not a franchise — JDE Peet's fully owns it. A franchise would mean an independent operator is paying for the right to use the Pilão brand.">C: "Café Pilão is a franchise of JDE Peet's — local operators pay royalties to use the brand in the Brazilian market."</button>
+  </div><div class="fb" id="pf7"></div>
+</div></div>
+
+<div class="qcard" id="pq8"><div class="qn">P8 <span class="qmark" id="pm8"></span></div><div class="qb">
+  <p class="qctx">Using both present perfect tenses in one message</p>
+  <p class="qs">Which message uses both Present Perfect and PPC correctly and naturally?</p>
+  <div class="choices col" id="pc8">
+    <button class="btn btn-lg" data-q="pq8" data-blank="" data-val="A" data-ans="A" data-sec="P" data-msg="&lt;strong&gt;Correct — A is perfect.&lt;/strong&gt; 'I've been working' (PPC — ongoing process), 'I've already looped' (PP + already — completed action with result), 'hasn't confirmed yet' (PP negative with yet — pending). Three different PP uses, each precise.">A: "I've been working on the brief since Monday and I've already looped Sarah in — she hasn't confirmed the timeline yet though."</button>
+    <button class="btn btn-lg" data-q="pq8" data-blank="" data-val="B" data-ans="A" data-sec="P" data-msg="&lt;strong&gt;A is stronger.&lt;/strong&gt; B uses simple past throughout ('worked', 'told', 'didn't confirm') — this disconnects the actions from the present moment and sounds like a report about finished events rather than a live update.">B: "I worked on the brief since Monday and I told Sarah — but she didn't confirm the timeline yet."</button>
+  </div><div class="fb" id="pf8"></div>
+</div></div>
+
+<div style="text-align:right;margin-top:1rem">
+  <button class="tbtn primary" onclick="go('t5',document.getElementById('nav5'))">Next: Speaking →</button>
+</div>
+</div>
+
+<!-- ========================
+     TAB 5: SPEAKING (3 prompts)
+======================== -->
+<div class="page" id="t5">
+<div class="sh">
+  <div class="sh-icon" style="background:var(--gol)">🎙️</div>
+  <div class="sh-meta">
+    <p class="sh-title">Section 5 — Speaking</p>
+    <p class="sh-info">3 prompts &middot; 60 seconds each &middot; self-assessment after each</p>
+  </div>
+  <span class="sh-timer">~7 min</span>
+</div>
+
+<div class="tip tip-b"><strong>How this section works</strong> Read each prompt, press Start, and speak for 60 seconds without stopping. After each prompt, rate yourself on the rubric. There are no right or wrong answers — the goal is fluency, vocabulary range, and confidence.</div>
+
+<!-- PROMPT 1 -->
+<div class="sp-card">
+  <div class="sp-head">
+    <p class="sp-title">Speaking Prompt 1</p>
+    <p class="sp-meta">60 seconds &middot; opinion giving + company types</p>
+  </div>
+  <div class="sp-body">
+    <p class="sp-prompt">Your manager asks: "If you had to choose — would you rather work for a start-up or stay in a multinational? What are the real trade-offs?" Respond as you would in a real meeting — confidently, with examples.</p>
+    <div class="sp-vocab">
+      <span class="sv">start-up</span><span class="sv">multinational</span><span class="sv">subsidiary</span><span class="sv">equity</span><span class="sv">bandwidth</span><span class="sv">deliverable</span><span class="sv">I've been noticing...</span><span class="sv">that said</span><span class="sv">if I'm being honest</span>
+    </div>
+    <div class="tring-wrap">
+      <svg class="tsvg" viewBox="0 0 72 72">
+        <circle class="ring-bg" cx="36" cy="36" r="28"/>
+        <circle class="ring-fill" id="sr1" cx="36" cy="36" r="28" stroke="#c8501a" stroke-dasharray="176" stroke-dashoffset="0"/>
+        <text class="tnum" id="sn1" x="36" y="37" fill="#0d0b09">60</text>
+      </svg>
+      <div class="tring-info">
+        <p class="tring-status" id="ss1">Press Start when ready</p>
+        <div class="tbtns">
+          <button class="tbtn primary" id="sb1" onclick="startSpeakTimer(1)">Start</button>
+          <button class="tbtn" id="sr1b" onclick="resetSpeakTimer(1)" disabled>Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="tdone-msg" id="sd1"><strong>Time's up!</strong> Rate yourself below — be honest.</div>
+    <p style="font-size:12px;color:var(--ink3);margin-bottom:.5rem;margin-top:.75rem">Self-assessment — how did you do?</p>
+    <div class="sa-grid">
+      <div class="sa-item" onclick="rateSelf(1,'fluency',this)" data-dim="fluency"><p class="sa-lbl">Fluency</p><p class="sa-val">spoke without long pauses</p></div>
+      <div class="sa-item" onclick="rateSelf(1,'vocab',this)" data-dim="vocab"><p class="sa-lbl">Vocabulary</p><p class="sa-val">used 2+ lesson expressions</p></div>
+      <div class="sa-item" onclick="rateSelf(1,'grammar',this)" data-dim="grammar"><p class="sa-lbl">Grammar</p><p class="sa-val">used PP or PPC naturally</p></div>
+      <div class="sa-item" onclick="rateSelf(1,'confidence',this)" data-dim="confidence"><p class="sa-lbl">Confidence</p><p class="sa-val">sounded professional</p></div>
+    </div>
+    <p class="sp-rubric">Aim for: at least 2 vocabulary expressions used naturally, both start-up AND multinational discussed with specific trade-offs, at least one PP or PPC form used.</p>
+  </div>
+</div>
+
+<!-- PROMPT 2 -->
+<div class="sp-card">
+  <div class="sp-head">
+    <p class="sp-title">Speaking Prompt 2</p>
+    <p class="sp-meta">60 seconds &middot; professional communication + grammar in use</p>
+  </div>
+  <div class="sp-body">
+    <p class="sp-prompt">David from HQ asks: "I've been trying to touch base with you all week — we need to circle back on the Q3 campaign direction. Have you had bandwidth to look at the deck I sent?" Respond naturally — explain your week and suggest a time to sync.</p>
+    <div class="sp-vocab">
+      <span class="sv">I've been heads-down</span><span class="sv">I've been juggling</span><span class="sv">I've already...</span><span class="sv">haven't had the bandwidth</span><span class="sv">touch base</span><span class="sv">circle back</span><span class="sv">contribute asynchronously</span>
+    </div>
+    <div class="tring-wrap">
+      <svg class="tsvg" viewBox="0 0 72 72">
+        <circle class="ring-bg" cx="36" cy="36" r="28"/>
+        <circle class="ring-fill" id="sr2" cx="36" cy="36" r="28" stroke="#c8501a" stroke-dasharray="176" stroke-dashoffset="0"/>
+        <text class="tnum" id="sn2" x="36" y="37" fill="#0d0b09">60</text>
+      </svg>
+      <div class="tring-info">
+        <p class="tring-status" id="ss2">Press Start when ready</p>
+        <div class="tbtns">
+          <button class="tbtn primary" id="sb2" onclick="startSpeakTimer(2)">Start</button>
+          <button class="tbtn" id="sr2b" onclick="resetSpeakTimer(2)" disabled>Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="tdone-msg" id="sd2"><strong>Time's up!</strong> Rate yourself below.</div>
+    <p style="font-size:12px;color:var(--ink3);margin-bottom:.5rem;margin-top:.75rem">Self-assessment</p>
+    <div class="sa-grid">
+      <div class="sa-item" onclick="rateSelf(2,'fluency',this)" data-dim="fluency"><p class="sa-lbl">Fluency</p><p class="sa-val">no long pauses</p></div>
+      <div class="sa-item" onclick="rateSelf(2,'vocab',this)" data-dim="vocab"><p class="sa-lbl">Vocabulary</p><p class="sa-val">used 2+ lesson expressions</p></div>
+      <div class="sa-item" onclick="rateSelf(2,'grammar',this)" data-dim="grammar"><p class="sa-lbl">Grammar</p><p class="sa-val">PP + PPC both used</p></div>
+      <div class="sa-item" onclick="rateSelf(2,'confidence',this)" data-dim="confidence"><p class="sa-lbl">Confidence</p><p class="sa-val">sounded natural</p></div>
+    </div>
+    <p class="sp-rubric">Aim for: 'I've been heads-down' + 'I've already' or 'I haven't had bandwidth' + a concrete suggestion to sync or circle back.</p>
+  </div>
+</div>
+
+<!-- PROMPT 3 -->
+<div class="sp-card">
+  <div class="sp-head">
+    <p class="sp-title">Speaking Prompt 3</p>
+    <p class="sp-meta">60 seconds &middot; free opinion &middot; all topics</p>
+  </div>
+  <div class="sp-body">
+    <p class="sp-prompt">A new colleague from India just joined the team. She asks: "What's it like working for a multinational subsidiary — do you feel like you have real autonomy, or does everything come from HQ?" Answer honestly — use your real experience.</p>
+    <div class="sp-vocab">
+      <span class="sv">subsidiary</span><span class="sv">parent company / HQ</span><span class="sv">push back on</span><span class="sv">move the needle</span><span class="sv">I've been navigating...</span><span class="sv">that said</span><span class="sv">don't get me wrong</span><span class="sv">I'm on the fence</span>
+    </div>
+    <div class="tring-wrap">
+      <svg class="tsvg" viewBox="0 0 72 72">
+        <circle class="ring-bg" cx="36" cy="36" r="28"/>
+        <circle class="ring-fill" id="sr3" cx="36" cy="36" r="28" stroke="#c8501a" stroke-dasharray="176" stroke-dashoffset="0"/>
+        <text class="tnum" id="sn3" x="36" y="37" fill="#0d0b09">60</text>
+      </svg>
+      <div class="tring-info">
+        <p class="tring-status" id="ss3">Press Start when ready</p>
+        <div class="tbtns">
+          <button class="tbtn primary" id="sb3" onclick="startSpeakTimer(3)">Start</button>
+          <button class="tbtn" id="sr3b" onclick="resetSpeakTimer(3)" disabled>Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="tdone-msg" id="sd3"><strong>Time's up!</strong> Rate yourself below — this is the most open-ended prompt.</div>
+    <p style="font-size:12px;color:var(--ink3);margin-bottom:.5rem;margin-top:.75rem">Self-assessment</p>
+    <div class="sa-grid">
+      <div class="sa-item" onclick="rateSelf(3,'fluency',this)" data-dim="fluency"><p class="sa-lbl">Fluency</p><p class="sa-val">natural pace, no freezing</p></div>
+      <div class="sa-item" onclick="rateSelf(3,'vocab',this)" data-dim="vocab"><p class="sa-lbl">Vocabulary</p><p class="sa-val">2+ expressions from lessons</p></div>
+      <div class="sa-item" onclick="rateSelf(3,'grammar',this)" data-dim="grammar"><p class="sa-lbl">Grammar</p><p class="sa-val">modal verbs + PP/PPC used</p></div>
+      <div class="sa-item" onclick="rateSelf(3,'confidence',this)" data-dim="confidence"><p class="sa-lbl">Confidence</p><p class="sa-val">real opinion, not generic</p></div>
+    </div>
+    <p class="sp-rubric">Aim for: both sides of the argument (pros and cons of HQ relationship), personal experience, at least one opinion expression ('if I'm being honest', 'don't get me wrong', 'that said').</p>
+  </div>
+</div>
+
+<div style="text-align:right;margin-top:1rem">
+  <button class="tbtn primary" onclick="go('t6',document.getElementById('nav6'));showResults()">See Results →</button>
+</div>
+</div>
+
+<!-- ========================
+     TAB 6: RESULTS
+======================== -->
+<div class="page" id="t6">
+<div class="sh">
+  <div class="sh-icon" style="background:var(--okl)">🎯</div>
+  <div class="sh-meta">
+    <p class="sh-title">Assessment Results</p>
+    <p class="sh-info">Your score &middot; section breakdown &middot; download your results</p>
+  </div>
+</div>
+
+<div class="final-score" id="final-score">
+  <p class="fs-title">Progress Assessment</p>
+  <p class="fs-big" id="fs-big">0/35</p>
+  <div class="sbar"><div class="sbar-f" id="fs-bar"></div></div>
+  <p class="fs-msg" id="fs-msg"></p>
+  <div class="fs-breakdown" id="fs-breakdown"></div>
+  <div class="fs-btns">
+    <button class="fs-btn fs-btn-dl" onclick="downloadResults()">⬇️ Download results (.txt)</button>
+    <button class="fs-btn fs-btn-cp" onclick="copyResults()">📋 Copy to clipboard</button>
+    <button class="fs-btn fs-btn-re" onclick="location.reload()">Try again</button>
+  </div>
+</div>
+
+<div id="speaking-summary" style="margin-top:2rem"></div>
+
+</div>
+
+<footer class="footer">
+  <span>Progress Assessment &middot; Caroline Kishibe &middot; B2→C1</span>
+  <span id="footer-time">Time used: 00:00</span>
+</footer>
+
+<script>
+// ===== GLOBAL STATE =====
+const state = {
+  answers: {},   // {qid: {chosen, correct, section}}
+  speaking: {},  // {1: {fluency, vocab, grammar, confidence}}
+  scores: {V:0, G:0, R:0, P:0},
+  totals: {V:10, G:10, R:7, P:8},
+  elapsed: 0,
+  timerRunning: false
+};
+
+// ===== GLOBAL TIMER =====
+let globalIv = null;
+function startGlobalTimer() {
+  if (globalIv) return;
+  globalIv = setInterval(() => {
+    state.elapsed++;
+    const m = String(Math.floor(state.elapsed/60)).padStart(2,'0');
+    const s = String(state.elapsed%60).padStart(2,'0');
+    document.getElementById('global-timer').textContent = m+':'+s;
+    document.getElementById('footer-time').textContent = 'Time used: '+m+':'+s;
+    if(state.elapsed >= 2400) {
+      clearInterval(globalIv);
+      document.getElementById('global-timer').style.color='#f0a070';
+    }
+  }, 1000);
+}
+function stopGlobalTimer() {
+  clearInterval(globalIv);
+  globalIv = null;
+}
+
+// ===== TAB NAVIGATION =====
+function go(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  btn.classList.add('on');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ===== QUIZ ENGINE =====
+const TOTAL = 35;
+let answered = 0, correct = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.btn[data-q]').forEach(b => b.addEventListener('click', () => pickAnswer(b)));
+});
+
+function pickAnswer(btn) {
+  const qid = btn.dataset.q;
+  const blankId = btn.dataset.blank;
+  const chosen = btn.dataset.val;
+  const answer = btn.dataset.ans;
+  const msg = btn.dataset.msg;
+  const sec = btn.dataset.sec;
+  const card = document.getElementById(qid);
+  if (!card || card.dataset.done) return;
+  card.dataset.done = 'true';
+  card.querySelectorAll('.btn[data-q]').forEach(b => b.setAttribute('disabled', true));
+  const qnum = qid.replace(/[a-z]/g,'');
+  const fb = document.getElementById((sec.toLowerCase())+'f'+qnum);
+  const mark = document.getElementById((sec.toLowerCase())+'m'+qnum);
+  const isOk = chosen === answer;
+  if (blankId) {
+    const bl = document.getElementById(blankId);
+    if (bl) { bl.textContent = answer; bl.className = 'blank ' + (isOk ? 'ok' : 'err'); }
+  }
+  card.className = 'qcard answered ' + (isOk ? 'ok' : 'err');
+  if (mark) { mark.textContent = isOk ? '✓' : '✗'; mark.className = 'qmark ' + (isOk ? 'qm-ok' : 'qm-err'); }
+  if (isOk) { btn.classList.add('ok'); if(fb){fb.className='fb show fb-ok';fb.innerHTML='<strong>Correct!</strong> '+msg;} correct++; state.scores[sec]++; }
+  else { btn.classList.add('err'); card.querySelectorAll('.btn[data-q]').forEach(b => { if(b.dataset.val===answer) b.classList.add('reveal'); }); if(fb){fb.className='fb show fb-err';fb.innerHTML='<strong>Not quite.</strong> '+msg;} }
+  state.answers[qid] = {chosen, answer, correct: isOk, section: sec};
+  answered++;
+  updateProgress(sec, qnum);
+  updateSaveBar();
+}
+
+function updateProgress(sec, qnum) {
+  const secMap = {V:'1',G:'2',R:'3',P:'4'};
+  const totalMap = {V:10,G:10,R:7,P:8};
+  const pfx = {'V':'v','G':'g','R':'r','P':'p'};
+  const secAnswered = Object.values(state.answers).filter(a=>a.section===sec).length;
+  const pf = document.getElementById('pf'+secMap[sec]);
+  const pl = document.getElementById('pl'+secMap[sec]);
+  if(pf) pf.style.width = Math.round(secAnswered/totalMap[sec]*100)+'%';
+  if(pl) pl.textContent = secAnswered+' / '+totalMap[sec];
+  // mark tab done if all answered
+  const navMap = {V:'nav1',G:'nav2',R:'nav3',P:'nav4'};
+  if(secAnswered === totalMap[sec]) {
+    const navBtn = document.getElementById(navMap[sec]);
+    if(navBtn) navBtn.classList.add('done');
+  }
+}
+
+function updateSaveBar() {
+  document.getElementById('sb-score-txt').textContent = correct+' / '+answered+' answered';
+}
+
+// ===== SPEAKING TIMERS =====
+const spTimers = {};
+const SP_SECS = 60;
+const SP_CIRC = 2*Math.PI*28;
+
+function startSpeakTimer(n) {
+  if (spTimers[n] && spTimers[n].running) return;
+  if (!spTimers[n]) spTimers[n] = {rem: SP_SECS, running: false, iv: null};
+  spTimers[n].running = true;
+  document.getElementById('sb'+n).setAttribute('disabled', true);
+  document.getElementById('sr'+n+'b').removeAttribute('disabled');
+  document.getElementById('sd'+n).classList.remove('show');
+  document.getElementById('ss'+n).textContent = 'Speaking...';
+  spTimers[n].iv = setInterval(() => {
+    spTimers[n].rem--;
+    updateSpDial(n);
+    if (spTimers[n].rem <= 0) {
+      clearInterval(spTimers[n].iv);
+      spTimers[n].running = false;
+      document.getElementById('sb'+n).removeAttribute('disabled');
+      document.getElementById('sd'+n).classList.add('show');
+      document.getElementById('ss'+n).textContent = 'Done!';
+    }
+  }, 1000);
+}
+
+function resetSpeakTimer(n) {
+  if (spTimers[n]) clearInterval(spTimers[n].iv);
+  spTimers[n] = {rem: SP_SECS, running: false, iv: null};
+  updateSpDial(n);
+  document.getElementById('sb'+n).removeAttribute('disabled');
+  document.getElementById('sr'+n+'b').setAttribute('disabled', true);
+  document.getElementById('sd'+n).classList.remove('show');
+  document.getElementById('ss'+n).textContent = 'Press Start when ready';
+}
+
+function updateSpDial(n) {
+  const rem = spTimers[n] ? spTimers[n].rem : SP_SECS;
+  const numEl = document.getElementById('sn'+n);
+  const ringEl = document.getElementById('sr'+n);
+  if (numEl) { numEl.textContent = rem; numEl.style.fill = rem<=10?'#9a1a1a':'#0d0b09'; }
+  if (ringEl) { ringEl.style.strokeDashoffset = SP_CIRC*(1-rem/SP_SECS); ringEl.style.stroke = rem<=10?'#9a1a1a':(rem<=20?'#8a6010':'#c8501a'); }
+}
+
+function rateSelf(prompt, dim, el) {
+  if (!state.speaking[prompt]) state.speaking[prompt] = {};
+  const prev = el.classList.contains('sel');
+  // deselect others in same dimension group
+  el.closest('.sa-grid').querySelectorAll('[data-dim="'+dim+'"]').forEach(e => e.classList.remove('sel'));
+  if (!prev) {
+    el.classList.add('sel');
+    state.speaking[prompt][dim] = el.querySelector('.sa-val').textContent;
+  } else {
+    delete state.speaking[prompt][dim];
+  }
+}
+
+// ===== RESULTS =====
+function showResults() {
+  const fs = document.getElementById('final-score');
+  fs.className = 'final-score show';
+  document.getElementById('fs-big').textContent = correct+' / '+TOTAL;
+  setTimeout(() => document.getElementById('fs-bar').style.width = Math.round(correct/TOTAL*100)+'%', 150);
+  const pct = Math.round(correct/TOTAL*100);
+  const msgs = [[90,'Outstanding! Your vocabulary and grammar are at a strong C1 level.'],[75,'Very good — solid B2/C1 range. Review the sections you found tricky.'],[60,'Good effort — focus on the grammar and practice sections in the next lesson.'],[0,'Keep going — every section you practise brings you closer to C1!']];
+  document.getElementById('fs-msg').textContent = (msgs.find(m=>pct>=m[0])||msgs[3])[1];
+  const bd = document.getElementById('fs-breakdown');
+  const secs = [{k:'V',n:'Vocabulary',t:10},{k:'G',n:'Grammar',t:10},{k:'R',n:'Reading',t:7},{k:'P',n:'Practice',t:8}];
+  bd.innerHTML = secs.map(s => `<div class="fs-section"><p class="fs-s-label">${s.n}</p><p class="fs-s-score">${state.scores[s.k]} / ${s.t}</p></div>`).join('');
+  // Speaking summary
+  const ss = document.getElementById('speaking-summary');
+  if(Object.keys(state.speaking).length > 0) {
+    ss.innerHTML = '<p class="sl">Speaking self-assessment</p>' +
+    [1,2,3].map(n => {
+      const r = state.speaking[n] || {};
+      const dims = ['fluency','vocab','grammar','confidence'];
+      const ticked = dims.filter(d=>r[d]).length;
+      return `<div style="background:white;border:1px solid var(--s3);border-radius:10px;padding:.9rem 1.2rem;margin-bottom:.5rem"><p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:5px">Prompt ${n}</p><p style="font-size:13px;color:var(--ink2)">${ticked}/4 criteria met ${ticked>=3?'✅':ticked>=2?'👍':'💪'}</p>${Object.entries(r).map(([k,v])=>`<p style="font-size:12px;color:var(--b2)">✓ ${k}: ${v}</p>`).join('')}</div>`;
+    }).join('');
+  }
+}
+
+// ===== SAVE / DOWNLOAD =====
+function generateResults() {
+  const now = new Date().toLocaleDateString('en-GB');
+  const m = String(Math.floor(state.elapsed/60)).padStart(2,'0');
+  const s = String(state.elapsed%60).padStart(2,'0');
+  let txt = `ENGLISH PROGRESS ASSESSMENT — CAROLINE KISHIBE\n`;
+  txt += `Date: ${now}\n`;
+  txt += `Time used: ${m}:${s}\n`;
+  txt += `Overall score: ${correct} / ${TOTAL} (${Math.round(correct/TOTAL*100)}%)\n\n`;
+  txt += `SECTION BREAKDOWN\n`;
+  txt += `─────────────────\n`;
+  const secs = [{k:'V',n:'Vocabulary',t:10},{k:'G',n:'Grammar',t:10},{k:'R',n:'Reading',t:7},{k:'P',n:'Practice',t:8}];
+  secs.forEach(s2 => { txt += `${s2.n}: ${state.scores[s2.k]} / ${s2.t}\n`; });
+  txt += `\nSPEAKING SELF-ASSESSMENT\n`;
+  txt += `────────────────────────\n`;
+  [1,2,3].forEach(n => {
+    const r = state.speaking[n] || {};
+    const dims = Object.keys(r).length;
+    txt += `Prompt ${n}: ${dims}/4 criteria self-reported\n`;
+    Object.entries(r).forEach(([k,v]) => { txt += `  ✓ ${k}\n`; });
+  });
+  txt += `\nDETAILED ANSWERS\n`;
+  txt += `────────────────\n`;
+  Object.entries(state.answers).forEach(([qid, data]) => {
+    txt += `${qid.toUpperCase()}: ${data.correct?'✓ CORRECT':'✗ INCORRECT'} (answered: ${data.chosen})\n`;
+  });
+  txt += `\n─ Assessment completed via Claude · Teacher: Renata ─`;
+  return txt;
+}
+
+function downloadResults() {
+  const txt = generateResults();
+  const blob = new Blob([txt], {type: 'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Caroline_Assessment_' + new Date().toISOString().split('T')[0] + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function copyResults() {
+  const txt = generateResults();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => {
+      const btns = document.querySelectorAll('.sbtn-cp, .fs-btn-cp');
+      btns.forEach(b => { const orig = b.textContent; b.textContent = '✓ Copied!'; setTimeout(() => b.textContent = orig, 2000); });
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = txt;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btns = document.querySelectorAll('.sbtn-cp, .fs-btn-cp');
+    btns.forEach(b => { const orig = b.textContent; b.textContent = '✓ Copied!'; setTimeout(() => b.textContent = orig, 2000); });
+  }
+}
+
+// init dials
+[1,2,3].forEach(n => updateSpDial(n));
+</script>
+</body>
+</html>
